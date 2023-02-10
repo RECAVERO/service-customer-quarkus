@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "Customer")
-public class Customer extends PanacheEntity {
+public class Customer extends PanacheEntity{
   private String name;
   private String lastName;
   private Long nroDocument;

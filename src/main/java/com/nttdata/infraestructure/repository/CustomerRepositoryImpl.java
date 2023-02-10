@@ -3,6 +3,7 @@ package com.nttdata.infraestructure.repository;
 import com.nttdata.domain.contract.CustomerRepository;
 import com.nttdata.domain.models.CustomerDto;
 import com.nttdata.infraestructure.entity.Customer;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
@@ -16,28 +17,12 @@ import java.util.stream.Collectors;
 public class CustomerRepositoryImpl implements CustomerRepository {
   @Override
   public List<Customer> getAllCustomer() {
-    List<Customer> collect = Customer.listAll();
-    List<Customer> list = collect.stream()
-        .filter(customer -> customer.getActive().equals("S"))
-        .collect(Collectors.toList());
-    return list;
+    return Customer.listAll();
   }
 
   @Override
-  public List<Customer> getByIdCustomer(Long id) {
-    List<Customer> collect = new ArrayList<>();
-    Customer aux = Customer.findById(id);
-
-    if(aux == null){
-      return collect;
-    }else{
-      collect.add(aux);
-      List<Customer> list = collect.stream()
-          .filter(customer -> customer.getActive().equals("S"))
-          .collect(Collectors.toList());
-      return list;
-    }
-
+  public Customer getByIdCustomer(Long id) {
+    return Customer.findById(id);
   }
 
   @Override
@@ -58,24 +43,24 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
   @Override
   @Transactional
-  public Customer updateCustomerById(Long id, CustomerDto customerDto) {
-    Customer customer = new Customer();
+  public List<Customer> updateCustomerById(Long id, CustomerDto customerDto) {
+    List<Customer> collect = new ArrayList<>();
     Customer customerOp = Customer.findById(id);
 
     if(customerOp == null){
-      throw new NullPointerException("customer not found");
+      return collect;
     }else{
-
-      customer.setName(customerDto.getName());
-      customer.setLastName(customerDto.getLastName());
-      customer.setNroDocument(customerDto.getNroDocument());
-      customer.setTypeCustomer(customerDto.getTypeCustomer());
-      customer.setTypeDocument(customerDto.getTypeDocument());
-      customer.setUpdated_datetime(this.getDateNow());
-      customer.persist();
+      customerOp.setName(customerDto.getName());
+      customerOp.setLastName(customerDto.getLastName());
+      customerOp.setNroDocument(customerDto.getNroDocument());
+      customerOp.setTypeCustomer(customerDto.getTypeCustomer());
+      customerOp.setTypeDocument(customerDto.getTypeDocument());
+      customerOp.setUpdated_datetime(this.getDateNow());
+      customerOp.persist();
+      collect.add(customerOp);
     }
 
-    return customerOp;
+    return collect;
   }
 
   @Override
@@ -92,9 +77,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
       customerOp.setActive("N");
       customerOp.persist();
       collect.add(customerOp);
-
     }
-
     return collect;
   }
 
