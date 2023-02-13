@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  *  - busqueda por id de un customer
  *  - creacion de un customer
  *  - actualizado la data de customer
- *  - borrar logico solo quitarle la actividad al customer para que no se muestre
+ *  - borrar logico solo quitarle la actividad al customer para que no se muestre ...
  */
 
 @Path("/customer")
